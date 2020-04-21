@@ -16,9 +16,18 @@
 
 package com.android.dex.util;
 
+import com.android.dex.Dex;
+import com.android.dex.DexException;
+import com.android.dex.DexFormat;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * File I/O utilities.
@@ -93,5 +102,34 @@ public final class FileUtils {
         return fileName.endsWith(".zip")
                 || fileName.endsWith(".jar")
                 || fileName.endsWith(".apk");
+    }
+
+
+    /**
+     *
+     * @param fileName apk file
+     * @return dex list
+     * @throws IOException
+     */
+    public static List<Dex> getDexListFromArchive(String fileName) throws IOException {
+        List<Dex> dexList = new ArrayList<>();
+        ZipFile zipFile = new ZipFile(fileName);
+        ZipEntry entry = zipFile.getEntry(DexFormat.DEX_IN_JAR_NAME);
+        if (entry != null) {
+            InputStream inputStream = zipFile.getInputStream(entry);
+            dexList.add(new Dex(inputStream));
+            for(int i = 2;; i++) {
+                entry = zipFile.getEntry(String.format("classes%d.dex", i));
+                if (entry == null) {
+                    break;
+                }
+                inputStream = zipFile.getInputStream(entry);
+                dexList.add(new Dex(inputStream));
+            }
+            zipFile.close();
+        } else {
+            throw new DexException("Expected " + DexFormat.DEX_IN_JAR_NAME + " in " + fileName);
+        }
+        return dexList;
     }
 }

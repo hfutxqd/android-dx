@@ -17,19 +17,28 @@
 package com.android.dx.command.findusages;
 
 import com.android.dex.Dex;
+import com.android.dex.util.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 public final class Main {
     public static void main(String[] args) throws IOException {
         String dexFile = args[0];
         String declaredBy = args[1];
         String memberName = args[2];
-
-        Dex dex = new Dex(new File(dexFile));
         PrintWriter out = new PrintWriter(System.out);
-        new FindUsages(dex, declaredBy, memberName, out).findUsages();
+        if (FileUtils.hasArchiveSuffix(dexFile)) {
+            List<Dex> dexList =  FileUtils.getDexListFromArchive(dexFile);
+            for (Dex dex : dexList) {
+                new FindUsages(dex, declaredBy, memberName, out).findUsages();
+            }
+        } else {
+            Dex dex = new Dex(new File(dexFile));
+            new FindUsages(dex, declaredBy, memberName, out).findUsages();
+        }
         out.flush();
     }
 }
