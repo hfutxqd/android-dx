@@ -29,8 +29,8 @@ import java.util.ArrayList;
  * have different locals sets for each caller.
  *
  * <p><b>Note:</b> For the most part, the documentation for this class
- * ignores the distinction between {@link com.android.dx.rop.type.Type} and {@link
- * com.android.dx.rop.type.TypeBearer}.</p>
+ * ignores the distinction between {@link Type} and {@link
+ * TypeBearer}.</p>
  */
 public class LocalsArraySet extends LocalsArray {
 

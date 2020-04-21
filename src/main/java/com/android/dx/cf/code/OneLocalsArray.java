@@ -26,8 +26,8 @@ import com.android.dx.util.Hex;
  * Representation of an array of local variables, with Java semantics.
  *
  * <p><b>Note:</b> For the most part, the documentation for this class
- * ignores the distinction between {@link com.android.dx.rop.type.Type} and {@link
- * com.android.dx.rop.type.TypeBearer}.</p>
+ * ignores the distinction between {@link Type} and {@link
+ * TypeBearer}.</p>
  */
 public class OneLocalsArray extends LocalsArray {
     /** {@code non-null;} actual array */
