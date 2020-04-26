@@ -25,11 +25,18 @@ import java.io.PrintWriter;
 import java.util.List;
 
 public final class Main {
+    public static boolean jsonOutput = false;
     public static void main(String[] args) throws IOException {
-        String dexFile = args[0];
-        String declaredBy = args[1];
-        String memberName = args[2];
         PrintWriter out = new PrintWriter(System.out);
+        int index = 0;
+        if ("--json".equals(args[index])) {
+            jsonOutput = true;
+            out.print("[");
+            index++;
+        }
+        String dexFile = args[index];
+        String declaredBy = args[index + 1];
+        String memberName = args[index + 2];
         if (FileUtils.hasArchiveSuffix(dexFile)) {
             List<Dex> dexList =  FileUtils.getDexListFromArchive(dexFile);
             for (Dex dex : dexList) {
@@ -38,6 +45,9 @@ public final class Main {
         } else {
             Dex dex = new Dex(new File(dexFile));
             new FindUsages(dex, declaredBy, memberName, out).findUsages();
+        }
+        if (jsonOutput) {
+            out.println("\b]");
         }
         out.flush();
     }

@@ -81,8 +81,14 @@ public final class FindUsages {
                     DecodedInstruction one) {
                 int fieldId = one.getIndex();
                 if (fieldIds.contains(fieldId)) {
-                    out.println(location() + ": field reference " + dex.fieldIds().get(fieldId)
+                    if (Main.jsonOutput) {
+                        out.print(String.format("{\"location\": \"%s\", \"type\": \"%s\", \"name\": \"%s\"},", 
+                                location(), "field_reference", dex.fieldIds().get(fieldId)));
+                    } else {
+                        out.println(location() + ": field reference " + dex.fieldIds().get(fieldId)
                             + " (" + OpcodeInfo.getName(one.getOpcode()) + ")");
+                    }
+
                 }
             }
         });
@@ -92,8 +98,13 @@ public final class FindUsages {
             public void visit(DecodedInstruction[] all, DecodedInstruction one) {
                 int methodId = one.getIndex();
                 if (methodIds.contains(methodId)) {
-                    out.println(location() + ": method reference " + dex.methodIds().get(methodId)
-                            + " (" + OpcodeInfo.getName(one.getOpcode()) + ")");
+                    if (Main.jsonOutput) {
+                        out.print(String.format("{\"location\": \"%s\", \"type\": \"%s\", \"name\": \"%s\"},",
+                                location(), "method_reference", dex.methodIds().get(methodId)));
+                    } else {
+                        out.println(location() + ": method reference " + dex.methodIds().get(methodId)
+                                + " (" + OpcodeInfo.getName(one.getOpcode()) + ")");
+                    }
                 }
             }
         });
@@ -129,7 +140,13 @@ public final class FindUsages {
             for (ClassData.Field field : classData.allFields()) {
                 int fieldIndex = field.getFieldIndex();
                 if (fieldIds.contains(fieldIndex)) {
-                    out.println(location() + " field declared " + dex.fieldIds().get(fieldIndex));
+                    if (Main.jsonOutput) {
+                        out.print(String.format("{\"location\": \"%s\", \"type\": \"%s\", \"name\": \"%s\"},",
+                                location(), "field_declare", dex.fieldIds().get(fieldIndex)));
+
+                    } else {
+                        out.println(location() + " field declared " + dex.fieldIds().get(fieldIndex));
+                    }
                 }
             }
 
@@ -137,7 +154,12 @@ public final class FindUsages {
                 currentMethod = method;
                 int methodIndex = method.getMethodIndex();
                 if (methodIds.contains(methodIndex)) {
-                    out.println(location() + " method declared " + dex.methodIds().get(methodIndex));
+                    if (Main.jsonOutput) {
+                        out.print(String.format("{\"location\": \"%s\", \"type\": \"%s\", \"name\": \"%s\"},",
+                                location(), "method_declare", dex.methodIds().get(methodIndex)));
+                    } else {
+                        out.println(location() + " method declared " + dex.methodIds().get(methodIndex));
+                    }
                 }
                 if (method.getCodeOffset() != 0) {
                     codeReader.visitAll(dex.readCode(method).getInstructions());
